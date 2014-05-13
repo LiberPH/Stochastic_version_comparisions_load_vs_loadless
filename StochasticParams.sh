@@ -81,6 +81,8 @@ cosa=`pwd`
 
 cd ..
 
+#################################################
+
 mkdir "$WORKINGDIR"_params_on_0.000409_off_3e-3
 cd "$WORKINGDIR"_params_on_0.000409_off_3e-3
 cp $BNGLFILE $WORKFILE
@@ -104,6 +106,8 @@ cosa=`pwd`
 ~/Documentos/Stoch_new/Stochsimulations.sh "$WORKINGDIR" "$cosa/$WORKFILE" "$cosa/control.bngl" "$WORKFILENAME" "$TAU" "$KON" "$KOFF" "$init"> "$WORKFILENAME".txt
              
 cd ..
+
+#################################################
 
 mkdir "$WORKINGDIR"_params_on_0.0002_off_4e-3
 cd "$WORKINGDIR"_params_on_0.0002_off_4e-3
@@ -130,7 +134,7 @@ cosa=`pwd`
 
 cd ..
 
-
+#######################################################
 mkdir "$WORKINGDIR"_params_on_0.0225_off_0.045
 cd "$WORKINGDIR"_params_on_0.0225_off_0.045
 cp $ORIG mastercontrol.bngl
@@ -155,6 +159,7 @@ cosa=`pwd`
 
 cd ..
 
+########################################################
 mkdir "$WORKINGDIR"_params_on_0.0065_off_0.13
 cd "$WORKINGDIR"_params_on_0.0065_off_0.13
 cp $ORIG mastercontrol.bngl

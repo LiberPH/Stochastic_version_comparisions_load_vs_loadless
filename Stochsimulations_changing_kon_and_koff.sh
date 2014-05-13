@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 ############################################
-#Stochsimulations.sh
+#Stochsimulations_changing_kon_and_koff.sh
 #Script to run 1000 stochastic simulations of the control and the dynamic with loads.
 #These simulations will be used to calculate the dynamics density and its properties (mean, sd, etc...).
-#
+#Similar to Stochsimulations.sh, but changing koff2 (koffR) and Kd2(KdR) to compare the influence of those parameters
+#in load induced retroactivity.
 #############################################
-
 ##################################################
 # Function to handle errors
 ##################################################
@@ -75,35 +75,42 @@ This is going to take a while. Go grab some popcorn or get some coffee.
 ...
 
 "
-#y=-5
-#z=0
-#a=-5
-#b=0
-#n=0
 
 
-#sed -i "s/koffR koff\*2\^$a/koffR koff/g" $WORKFILE
-#sed -i "s/koffR koff\*2\^$a/koffR koff/g" control.bngl
+y=-5
+z=0
+a=-5
+b=0
+n=0
 
-#sed -i "s/konR .*/konR kon/g" $WORKFILE
-#sed -i "s/konR .*/konR kon/g" control.bngl
+$RUNBNGL mastercontrol.bngl
 
-for ll in {1..1000}
-	do
-		$RUNBNGL $WORKFILE                    
-        $RUNBNGL control.bngl
-		cp control.gdat control_"$ll".gdat   
-        cp "$WORKFILENAME".gdat "$WORKFILENAME"_"$TAU"_"$KON"_"$KOFF"_"$ll".gdat
-		Rscript $RUNR "$WORKFILENAME".gdat control.gdat output.txt
-		Rscript $RUNR2 "$WORKFILENAME".gdat control.gdat output2.txt
-		#Rscript $RUNR control.gdat mastercontrol.gdat output3.txt
-		cat output.txt >> OUTPUT.txt
-		echo "" >> OUTPUT.txt
-		cat output2.txt >> OUTPUT2.txt
-		echo "" >> OUTPUT2.txt
-		#cat output3.txt >> OUTPUT3.txt
-		#echo "" >> OUTPUT3.txt                   		
-	done
+
+for ((b=-5; b<=5 ; b++));
+    do #Changing koffR
+        sed -i "s/koffR koff\*2\^$a/koffR koff\*2\^$b/g" $WORKFILE
+        sed -i "s/koffR koff\*2\^$a/koffR koff\*2\^$b/g" control.bngl
+        for ((z=-5; z<=5 ; z++));
+            do #Changing kdR
+                sed -i "s/kdR kd\*2\^$y/kdR kd\*2\^$z/g" $WORKFILE
+                sed -i "s/kdR kd\*2\^$y/kdR kd\*2\^$z/g" control.bngl
+
+                for ll in {1..1000}
+                    do
+                        $RUNBNGL $WORKFILE
+                        $RUNBNGL control.bngl
+                        cp control.gdat control_"$ll".gdat
+                        cp "$WORKFILENAME".gdat "$WORKFILENAME"_"$TAU"_"$KON"_"$KOFF"_"$b"_"$z"_"$ll".gdat
+                        Rscript $RUNR "$WORKFILENAME".gdat control.gdat output_"$b"_"$z".txt
+                        Rscript $RUNR2 "$WORKFILENAME".gdat control.gdat output2_"$b"_"$z".txt
+                        #Rscript $RUNR control.gdat mastercontrol.gdat output3.txt
+                        cat output_"$b"_"$z".txt >> OUTPUT_"$b"_"$z".txt
+                        echo "" >> OUTPUT_"$b"_"$z".txt
+                        cat output2_"$b"_"$z".txt >> OUTPUT2_"$b"_"$z".txt
+                        echo "" >> OUTPUT2_"$b"_"$z".txt
+                    done
+            done
+    done
 
 Rscript $RUNR3 "$WORKFILENAME"_"$TAU"_"$KON"_"$KOFF" 
 #Rscript $RUNR4 OUTPUT.txt OUTPUT2.txt OUTPUT3.txt
